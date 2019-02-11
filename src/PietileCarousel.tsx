@@ -18,14 +18,12 @@ interface Props {
 }
 
 interface State {
-  startIndex: number;
-  sliderOffset: number;
+  index: number;
 }
 
 interface Animation {
   from: number;
-  index: number;
-  raf?: number;
+  raf: number;
   start?: number;
   to: number;
 }
@@ -36,23 +34,45 @@ export class PietileCarousel extends React.Component<Props, State> {
     margin: 0,
   };
 
-  private index = 0;
-
   private animation: Animation | null = null;
 
   state: Readonly<State> = {
-    startIndex: 0,
-    sliderOffset: 0,
+    index: 0,
   };
+
+  componentDidMount() {
+    if (!this.props.onChange) {
+      return;
+    }
+
+    this.props.onChange(this.state.index);
+  }
+
+  componentDidUpdate(prevProps: Props, prevState: State) {
+    if (prevState.index === this.state.index) {
+      return;
+    }
+
+    if (!this.props.onChange) {
+      return;
+    }
+
+    const prevChildrenCount = React.Children.count(this.props.children);
+    const childrenCount = React.Children.count(this.props.children);
+
+    const prevIndex =
+      ((Math.round(prevState.index) % prevChildrenCount) + prevChildrenCount) % prevChildrenCount;
+    const index = ((Math.round(this.state.index) % childrenCount) + childrenCount) % childrenCount;
+    if (prevIndex === index) {
+      return;
+    }
+
+    this.props.onChange(index);
+  }
 
   componentWillUnmount() {
     this._stop();
   }
-
-  // Width of one frame in %
-  _getFrameWidth = (props: Props) => {
-    return 100 / React.Children.count(props.children);
-  };
 
   // Animation step
   _move = (timestamp: number) => {
@@ -64,6 +84,10 @@ export class PietileCarousel extends React.Component<Props, State> {
 
     if (!start) {
       // First step
+      this.setState({
+        index: this.animation.from,
+      });
+
       this.animation.start = timestamp;
       this.animation.raf = requestAnimationFrame(this._move);
 
@@ -75,14 +99,8 @@ export class PietileCarousel extends React.Component<Props, State> {
     if (progress >= 1) {
       // Last step
       this.setState({
-        sliderOffset: this.animation.to,
+        index: this.animation.to,
       });
-
-      this.index = this.animation.index;
-
-      if (this.props.onChange) {
-        this.props.onChange(this.animation.index);
-      }
 
       this.animation = null;
 
@@ -92,7 +110,7 @@ export class PietileCarousel extends React.Component<Props, State> {
     const { to, from } = this.animation;
 
     this.setState({
-      sliderOffset: from + standardEasing(progress) * (to - from),
+      index: from + standardEasing(progress) * (to - from),
     });
 
     this.animation.raf = requestAnimationFrame(this._move);
@@ -109,8 +127,7 @@ export class PietileCarousel extends React.Component<Props, State> {
     this._stop();
 
     this.animation = {
-      index: this.index,
-      from: this.state.sliderOffset,
+      from: this.state.index,
       to: from,
       raf: requestAnimationFrame(this._move),
     };
@@ -140,24 +157,10 @@ export class PietileCarousel extends React.Component<Props, State> {
     }
 
     this.animation = {
-      index: this.index ? this.index - 1 : React.Children.count(this.props.children) - 1,
-      from: -this._getFrameWidth(this.props),
-      to: 0,
+      from: this.state.index,
+      to: this.state.index + 1,
+      raf: requestAnimationFrame(this._move),
     };
-
-    this.setState(
-      {
-        startIndex: this.animation.index,
-        sliderOffset: this.animation.from,
-      },
-      () => {
-        if (!this.animation) {
-          return;
-        }
-
-        this.animation.raf = requestAnimationFrame(this._move);
-      },
-    );
   };
 
   moveLeft = () => {
@@ -171,38 +174,51 @@ export class PietileCarousel extends React.Component<Props, State> {
     }
 
     this.animation = {
-      index: (this.index + 1) % React.Children.count(this.props.children),
-      from: 0,
-      to: -this._getFrameWidth(this.props),
+      from: this.state.index,
+      to: this.state.index - 1,
+      raf: requestAnimationFrame(this._move),
     };
+  };
 
-    this.setState(
-      {
-        startIndex: this.index,
-        sliderOffset: this.animation.from,
-      },
-      () => {
-        if (!this.animation) {
-          return;
-        }
+  moveTo = (index: number) => {
+    const childrenCount = React.Children.count(this.props.children);
+    const currentIndex =
+      ((Math.round(this.state.index) % childrenCount) + childrenCount) % childrenCount;
 
-        this.animation.raf = requestAnimationFrame(this._move);
-      },
-    );
+    this.animation = {
+      from: this.state.index,
+      to: this.state.index + index - currentIndex,
+      raf: requestAnimationFrame(this._move),
+    };
   };
 
   render() {
     const { children, className, style = {}, margin, count } = this.props;
-    const { sliderOffset, startIndex } = this.state;
+    const { index } = this.state;
 
     const containerStyle = {
       ...style,
       overflow: 'hidden',
     };
 
+    const childrenCount = React.Children.count(this.props.children);
+    const tail = childrenCount - count;
+    const frameWidth = 100 / React.Children.count(this.props.children);
+
+    let startIndex;
+    let translate;
+    if (index >= 0) {
+      startIndex = (Math.floor(index / tail) * tail) % childrenCount;
+      translate = frameWidth * (index % tail);
+    } else {
+      startIndex =
+        (childrenCount + ((Math.ceil(index / tail) * tail - tail) % childrenCount)) % childrenCount;
+      translate = frameWidth * (tail + (index % tail));
+    }
+
     const sliderStyle = {
       height: '100%',
-      transform: `translateX(${sliderOffset}%)`,
+      transform: `translateX(${-translate}%)`,
       willChange: 'transform',
     };
 
