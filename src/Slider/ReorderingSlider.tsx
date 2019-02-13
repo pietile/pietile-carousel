@@ -8,7 +8,7 @@ interface Props {
   readonly style: React.CSSProperties;
 }
 
-export function Slider({ children, startIndex, margin, count, style }: Props) {
+export function ReorderingSlider({ children, startIndex, margin, count, style }: Props) {
   const childrenCount = React.Children.count(children);
 
   const containerStyle = {
