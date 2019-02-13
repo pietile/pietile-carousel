@@ -2,6 +2,8 @@
 
 React carousel which tries to minimize amount of repaints and be simple in use.
 
+<img src="https://media.giphy.com/media/1gRsY9qTHyJrYTxGYS/giphy.gif" />
+
 ## Features
 
 - Doesn't require to specify items dimensions (pure css solution)
