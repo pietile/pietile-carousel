@@ -24,7 +24,7 @@
     "import-sort-parser-babylon": "~5.2.0",
     "import-sort-parser-typescript": "~5.0.0",
     "import-sort-style-pietile": "~1.0.0",
-    "typescript": "3.3.1"
+    "typescript": "3.3.3"
   },
   "repository": {
     "type": "git",
