@@ -1,5 +1,7 @@
 # Pietile Carousel
 
+[![npm version](https://badgen.net/bundlephobia/minzip/pietile-carousel)](https://bundlephobia.com/result?p=pietile-carousel@latest)
+
 React carousel which tries to minimize amount of repaints and be simple in use.
 
 <img src="https://media.giphy.com/media/1gRsY9qTHyJrYTxGYS/giphy.gif" />
@@ -10,6 +12,7 @@ React carousel which tries to minimize amount of repaints and be simple in use.
 - Tries to rely on translates as much as possible for movements (zero paints in best cases)
 - Arbitary number of visible items
 - Сyclicality
+- Tiny (2.1kB gzipped)
 
 ## Usage
 
