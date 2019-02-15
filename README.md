@@ -16,7 +16,7 @@ React carousel which tries to minimize amount of repaints and be simple in use.
 
 ## Usage
 
-Every item is wrapped in container where it can layout it's content. The size of container depends on the size of carousel and amount of visible items. You can use any styling system you want to set styles. Get ref and user moveLeft/moveRight/moveTo methods for scroll.
+Every item is wrapped in container where it can layout it's content. The size of container depends on the size of carousel and amount of visible items. You can use any styling system you want to set styles. Get ref and use moveLeft/moveRight/moveTo methods for scroll.
 
 ## Example
 
