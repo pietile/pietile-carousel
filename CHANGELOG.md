@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.1
+
+- Handle case when children equal count
+
 ## 1.2.0
 
 - Use only transforms in single item mode with zero margins
