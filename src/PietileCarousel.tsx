@@ -207,7 +207,10 @@ export class PietileCarousel extends React.Component<Props, State> {
 
     let startIndex;
     let translate;
-    if (index >= 0) {
+    if (!tail) {
+      startIndex = 0;
+      translate = 0;
+    } else if (index >= 0) {
       startIndex = (Math.floor(index / tail) * tail) % childrenCount;
       translate = frameWidth * (index % tail);
     } else {
