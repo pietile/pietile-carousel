@@ -48,7 +48,7 @@ export class PietileCarousel extends React.Component<Props, State> {
     this.props.onChange(this.state.index);
   }
 
-  componentDidUpdate(prevProps: Props, prevState: State) {
+  componentDidUpdate(_: Props, prevState: State) {
     if (prevState.index === this.state.index) {
       return;
     }
