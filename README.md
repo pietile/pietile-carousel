@@ -1,6 +1,7 @@
 # Pietile Carousel
 
-[![npm version](https://badgen.net/bundlephobia/minzip/pietile-carousel)](https://bundlephobia.com/result?p=pietile-carousel@latest)
+[![npm version](https://badgen.net/npm/v/pietile-carousel?color=56C838)](https://www.npmjs.com/package/pietile-carousel)
+[![install size](https://badgen.net/packagephobia/install/pietile-carousel)](https://packagephobia.now.sh/result?p=pietile-carousel)
 
 React carousel which tries to minimize amount of repaints and be simple in use.
 
@@ -14,6 +15,20 @@ React carousel which tries to minimize amount of repaints and be simple in use.
 - Сyclicality
 - Tiny (2.1kB gzipped)
 
+## Installation
+
+Using yarn
+
+```sh
+yarn add pietile-carousel
+```
+
+or using npm
+
+```sh
+npm install -S pietile-carousel
+```
+
 ## Usage
 
 Every item is wrapped in container where it can layout it's content. The size of container depends on the size of carousel and amount of visible items. You can use any styling system you want to set styles. Get ref and use moveLeft/moveRight/moveTo methods for scroll.
@@ -23,7 +38,7 @@ Every item is wrapped in container where it can layout it's content. The size of
 ```jsx
 import React, { useRef, useEffect } from 'react';
 
-import PietileCarousel from 'PietileCarousel';
+import PietileCarousel from 'pietile-carousel';
 
 function App() {
   const carousel = useRef(null);
