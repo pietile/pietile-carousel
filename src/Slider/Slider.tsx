@@ -1,22 +1,59 @@
 import * as React from 'react';
 
-import { ReorderingSlider } from './ReorderingSlider';
-import { TransformingSlider } from './TransformingSlider';
+import { FrameContainer } from './FrameContainer';
 
-interface Props {
-  readonly children: React.ReactNode;
-  readonly count: number;
-  readonly margin: number;
-  readonly startIndex: number;
-  readonly style: React.CSSProperties;
-}
+type Props = {
+  children?: React.ReactNode;
+  count: number;
+  index: number;
+  margin: number;
+  style?: React.CSSProperties;
+  innerRef: any;
+} & React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
 
-export function Slider(props: Props) {
-  const { margin, count, ...rest } = props;
+export function Slider({
+  children,
+  style = {},
+  margin,
+  count,
+  index,
+  innerRef,
+  ...props
+}: Props): JSX.Element {
+  const containerStyle = {
+    ...style,
+    overflow: 'hidden',
+  };
 
-  if (!margin && count === 1) {
-    return <TransformingSlider {...rest} />;
+  const childrenCount = React.Children.count(children);
+  const tail = childrenCount - count;
+  const frameWidth = 100 / React.Children.count(children);
+
+  let startIndex;
+  let translate;
+  if (!tail) {
+    startIndex = 0;
+    translate = 0;
+  } else if (index >= 0) {
+    startIndex = (Math.floor(index / tail) * tail) % childrenCount;
+    translate = frameWidth * (index % tail);
+  } else {
+    startIndex =
+      (childrenCount + ((Math.ceil(index / tail) * tail - tail) % childrenCount)) % childrenCount;
+    translate = frameWidth * (tail + (index % tail));
   }
 
-  return <ReorderingSlider {...props} />;
+  const sliderStyle = {
+    height: '100%',
+    transform: `translateX(${-translate}%)`,
+    willChange: 'transform',
+  };
+
+  return (
+    <div ref={innerRef} style={containerStyle} {...props}>
+      <FrameContainer style={sliderStyle} startIndex={startIndex} margin={margin} count={count}>
+        {children}
+      </FrameContainer>
+    </div>
+  );
 }

@@ -1,236 +1,105 @@
 import * as React from 'react';
 
-import * as bezier from 'bezier-easing';
+import { animated } from 'react-spring';
 
 import { Slider } from './Slider';
+import { useAnimation } from './useAnimation';
+import { useAutoplay } from './useAutoplay';
+import { useDrag } from './useDrag';
 
-const DURATION = 350;
-
-const standardEasing = bezier(0.4, 0.0, 0.2, 1);
+const AnimatedSlider = animated(Slider);
 
 interface Props {
+  autoplayInterval?: number;
   children?: React.ReactNode;
   className?: string;
-  count: number;
-  margin: number;
+  count?: number;
+  draggable?: boolean;
+  margin?: number;
   style?: React.CSSProperties;
   onChange?: (index: number) => void;
 }
 
-interface State {
-  index: number;
-}
+export const PietileCarousel = React.forwardRef(
+  (
+    {
+      autoplayInterval = 0,
+      count = 1,
+      children,
+      draggable = true,
+      margin = 0,
+      onChange,
+      ...props
+    }: Props,
+    ref: any,
+  ) => {
+    const sliderRef = React.useRef<HTMLElement>(null);
+    const { index, set } = useAnimation(React.Children.count(children), onChange);
 
-interface Animation {
-  from: number;
-  raf: number;
-  start?: number;
-  to: number;
-}
+    const autoplay = useAutoplay({ interval: autoplayInterval, index, set });
 
-export class PietileCarousel extends React.Component<Props, State> {
-  static defaultProps = {
-    count: 1,
-    margin: 0,
-  };
+    const dragging = React.useRef<boolean>(false);
+    useDrag({
+      count,
+      enabled: !!draggable,
+      index,
+      margin,
+      ref: sliderRef,
+      set,
+      onStart: () => {
+        dragging.current = true;
 
-  private animation: Animation | null = null;
+        autoplay.stop();
+      },
+      onEnd: (event: React.SyntheticEvent) => {
+        if (!dragging.current) {
+          return;
+        }
 
-  state: Readonly<State> = {
-    index: 0,
-  };
+        dragging.current = false;
 
-  componentDidMount() {
-    if (!this.props.onChange) {
-      return;
-    }
+        autoplay.start();
 
-    this.props.onChange(this.state.index);
-  }
+        if (!(event instanceof MouseEvent)) {
+          return;
+        }
 
-  componentDidUpdate(_: Props, prevState: State) {
-    if (prevState.index === this.state.index) {
-      return;
-    }
-
-    if (!this.props.onChange) {
-      return;
-    }
-
-    const prevChildrenCount = React.Children.count(this.props.children);
-    const childrenCount = React.Children.count(this.props.children);
-
-    const prevIndex =
-      ((Math.round(prevState.index) % prevChildrenCount) + prevChildrenCount) % prevChildrenCount;
-    const index = ((Math.round(this.state.index) % childrenCount) + childrenCount) % childrenCount;
-    if (prevIndex === index) {
-      return;
-    }
-
-    this.props.onChange(index);
-  }
-
-  componentWillUnmount() {
-    this._stop();
-  }
-
-  // Animation step
-  _move = (timestamp: number) => {
-    if (!this.animation) {
-      return;
-    }
-
-    const { start } = this.animation;
-
-    if (!start) {
-      // First step
-      this.setState({
-        index: this.animation.from,
-      });
-
-      this.animation.start = timestamp;
-      this.animation.raf = requestAnimationFrame(this._move);
-
-      return;
-    }
-
-    const progress = (timestamp - start) / DURATION;
-
-    if (progress >= 1) {
-      // Last step
-      this.setState({
-        index: this.animation.to,
-      });
-
-      this.animation = null;
-
-      return;
-    }
-
-    const { to, from } = this.animation;
-
-    this.setState({
-      index: from + standardEasing(progress) * (to - from),
+        event.target.addEventListener(
+          'click',
+          e => {
+            e.preventDefault();
+          },
+          { once: true },
+        );
+      },
     });
 
-    this.animation.raf = requestAnimationFrame(this._move);
-  };
+    React.useImperativeHandle(
+      ref,
+      () => ({
+        moveRight: (): void => {
+          autoplay.start();
 
-  // Run animation in reverse
-  _moveBack = () => {
-    if (!this.animation) {
-      return;
-    }
+          set({ index: Math.floor(index.getValue() - 1) });
+        },
+        moveLeft: (): void => {
+          autoplay.start();
 
-    const { from } = this.animation;
+          set({ index: Math.ceil(index.getValue() + 1) });
+        },
+        moveTo: (newIndex: number): void => {
+          autoplay.start();
 
-    this._stop();
-
-    this.animation = {
-      from: this.state.index,
-      to: from,
-      raf: requestAnimationFrame(this._move),
-    };
-  };
-
-  // Stop animation
-  _stop = () => {
-    if (!this.animation) {
-      return;
-    }
-
-    if (this.animation.raf) {
-      cancelAnimationFrame(this.animation.raf);
-    }
-
-    this.animation = null;
-  };
-
-  moveRight = () => {
-    if (this.animation) {
-      if (this.animation.from > this.animation.to) {
-        // We are currently in move to opposite direction, so just move back
-        this._moveBack();
-      }
-
-      return;
-    }
-
-    this.animation = {
-      from: this.state.index,
-      to: this.state.index + 1,
-      raf: requestAnimationFrame(this._move),
-    };
-  };
-
-  moveLeft = () => {
-    if (this.animation) {
-      if (this.animation.from < this.animation.to) {
-        // We are currently in move to opposite direction, so just move back
-        this._moveBack();
-      }
-
-      return;
-    }
-
-    this.animation = {
-      from: this.state.index,
-      to: this.state.index - 1,
-      raf: requestAnimationFrame(this._move),
-    };
-  };
-
-  moveTo = (index: number) => {
-    const childrenCount = React.Children.count(this.props.children);
-    const currentIndex =
-      ((Math.round(this.state.index) % childrenCount) + childrenCount) % childrenCount;
-
-    this.animation = {
-      from: this.state.index,
-      to: this.state.index + index - currentIndex,
-      raf: requestAnimationFrame(this._move),
-    };
-  };
-
-  render() {
-    const { children, className, style = {}, margin, count } = this.props;
-    const { index } = this.state;
-
-    const containerStyle = {
-      ...style,
-      overflow: 'hidden',
-    };
-
-    const childrenCount = React.Children.count(this.props.children);
-    const tail = childrenCount - count;
-    const frameWidth = 100 / React.Children.count(this.props.children);
-
-    let startIndex;
-    let translate;
-    if (!tail) {
-      startIndex = 0;
-      translate = 0;
-    } else if (index >= 0) {
-      startIndex = (Math.floor(index / tail) * tail) % childrenCount;
-      translate = frameWidth * (index % tail);
-    } else {
-      startIndex =
-        (childrenCount + ((Math.ceil(index / tail) * tail - tail) % childrenCount)) % childrenCount;
-      translate = frameWidth * (tail + (index % tail));
-    }
-
-    const sliderStyle = {
-      height: '100%',
-      transform: `translateX(${-translate}%)`,
-      willChange: 'transform',
-    };
+          set({ index: newIndex });
+        },
+      }),
+      [autoplay, index, set],
+    );
 
     return (
-      <div style={containerStyle} className={className}>
-        <Slider style={sliderStyle} startIndex={startIndex} margin={margin} count={count}>
-          {children}
-        </Slider>
-      </div>
+      <AnimatedSlider innerRef={sliderRef} index={index} count={count} margin={margin} {...props}>
+        {children}
+      </AnimatedSlider>
     );
-  }
-}
+  },
+);

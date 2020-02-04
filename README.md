@@ -3,17 +3,16 @@
 [![npm version](https://badgen.net/npm/v/pietile-carousel?color=56C838)](https://www.npmjs.com/package/pietile-carousel)
 [![install size](https://badgen.net/packagephobia/install/pietile-carousel)](https://packagephobia.now.sh/result?p=pietile-carousel)
 
-React carousel which tries to minimize amount of repaints and be simple in use.
+React carousel based on [react-spring](https://github.com/react-spring/react-spring) and [react-use-gesture](https://github.com/react-spring/react-use-gesture) which tries to minimize amount of repaints and be simple in use.
 
 <img src="https://media.giphy.com/media/1gRsY9qTHyJrYTxGYS/giphy.gif" />
 
 ## Features
 
 - Doesn't require to specify items dimensions (pure css solution)
-- Tries to rely on translates as much as possible for movements (zero paints in best cases)
+- Relies on translates for movements (zero paints)
 - Arbitary number of visible items
 - Сyclicality
-- Tiny (2.1kB gzipped)
 
 ## Installation
 
@@ -36,27 +35,11 @@ Every item is wrapped in container where it can layout it's content. The size of
 ## Example
 
 ```jsx
-import React, { useRef, useEffect } from 'react';
+import React from 'react';
 
 import PietileCarousel from 'pietile-carousel';
 
 function App() {
-  const carousel = useRef(null);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (!carousel.current) {
-        return;
-      }
-
-      carousel.current.moveLeft();
-    }, 1000);
-
-    return () => {
-      clearInterval(interval);
-    };
-  });
-
   const carouselStyle = {
     width: 150,
     height: 100,
@@ -68,7 +51,7 @@ function App() {
   };
 
   return (
-    <PietileCarousel ref={carousel} style={carouselStyle}>
+    <PietileCarousel style={carouselStyle}>
       <div style={{ ...itemStyle, backgroundColor: 'red' }} />
       <div style={{ ...itemStyle, backgroundColor: 'orange' }} />
       <div style={{ ...itemStyle, backgroundColor: 'yellow' }} />
@@ -81,21 +64,23 @@ function App() {
 
 ### Properties
 
-| name      | description                                |     type | default |
-| :-------- | :----------------------------------------- | -------: | :------ |
-| children  | Components rendered in carousel (required) |     Node | -       |
-| className | CSS class                                  |   string | -       |
-| count     | Amount of visible items                    |   number | 1       |
-| margin    | Margin between items                       |   number | 0       |
-| style     | Style object                               |   Object | -       |
-| onChange  | Callback when index changes                | Function | -       |
+| name             | description                                |     type | default |
+| :--------------- | :----------------------------------------- | -------: | :------ |
+| autoplayInterval | How often autoplay happens (0 to disable)  |   number | 0       |
+| children         | Components rendered in carousel (required) |     Node | -       |
+| className        | CSS class                                  |   string | -       |
+| count            | Amount of visible items                    |   number | 1       |
+| draggable        | Allow drag                                 |  boolean | true    |
+| margin           | Margin between items                       |   number | 0       |
+| style            | Style object                               |   Object | -       |
+| onChange         | Callback when index changes                | Function | -       |
 
 ### Methods
 
 | name            | description     |
 | :-------------- | :-------------- |
 | moveLeft()      | Scroll left     |
-| moveRight()     | Scroll left     |
+| moveRight()     | Scroll right    |
 | scrollTo(index) | Scroll to index |
 
 ## License

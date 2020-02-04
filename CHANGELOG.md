@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.0.0
+
+**Major update**
+
+- Animation through [react-spring](https://github.com/react-spring/react-spring)
+- Dragging support with [react-use-gesture](https://github.com/react-spring/react-use-gesture)
+- Autoplay out of the box
+- Zero repaints in any case
+
 ## 1.2.1
 
 - Handle case when children equal count

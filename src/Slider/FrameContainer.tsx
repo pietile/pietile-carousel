@@ -2,18 +2,20 @@ import * as React from 'react';
 
 interface Props {
   readonly children: React.ReactNode;
+  readonly count: number;
+  readonly margin: number;
   readonly startIndex: number;
   readonly style: React.CSSProperties;
 }
 
-export function TransformingSlider({ children, startIndex, style }: Props) {
+export function FrameContainer({ children, startIndex, margin, count, style }: Props): JSX.Element {
   const childrenCount = React.Children.count(children);
 
   const containerStyle = {
     ...style,
+
     display: 'flex',
-    width: `${100 * childrenCount}%`,
-    willChange: 'transform',
+    width: `calc(((100% - ${(count - 1) * margin}px) / ${count} + ${margin}px)*${childrenCount})`,
   };
 
   return (
@@ -26,6 +28,7 @@ export function TransformingSlider({ children, startIndex, style }: Props) {
           flex: 1,
           transform: `translateX(${pos * 100}%)`,
           willChange: 'transform',
+          paddingRight: margin,
         };
 
         return <div style={frameStyle}>{child}</div>;
