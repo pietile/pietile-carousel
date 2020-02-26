@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.1
+
+- Type for ImperativeHandle
+
 ## 2.0.0
 
 **Major update**
