@@ -9,6 +9,12 @@ import { useDrag } from './useDrag';
 
 const AnimatedSlider = animated(Slider);
 
+export interface PietileCarouselHandle {
+  moveRight: () => void;
+  moveLeft: () => void;
+  moveTo: (index: number) => void;
+}
+
 interface Props {
   autoplayInterval?: number;
   children?: React.ReactNode;
@@ -20,7 +26,7 @@ interface Props {
   onChange?: (index: number) => void;
 }
 
-export const PietileCarousel = React.forwardRef(
+export const PietileCarousel = React.forwardRef<PietileCarouselHandle, Props>(
   (
     {
       autoplayInterval = 0,
@@ -31,7 +37,7 @@ export const PietileCarousel = React.forwardRef(
       onChange,
       ...props
     }: Props,
-    ref: any,
+    ref: React.Ref<PietileCarouselHandle>,
   ) => {
     const sliderRef = React.useRef<HTMLElement>(null);
     const { index, set } = useAnimation(React.Children.count(children), onChange);

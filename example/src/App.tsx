@@ -1,9 +1,9 @@
 import React, { useRef, useState } from 'react';
 
-import PietileCarousel from 'pietile-carousel';
+import PietileCarousel, { PietileCarouselHandle } from 'pietile-carousel';
 
 export function App(): JSX.Element {
-  const carousel = useRef<PietileCarousel>(null);
+  const carousel = useRef<PietileCarouselHandle>(null);
   const [index, setIndex] = useState(0);
 
   const carouselStyle = {

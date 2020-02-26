@@ -1,1 +1,1 @@
-export { PietileCarousel as default } from './PietileCarousel';
+export { PietileCarousel as default, PietileCarouselHandle } from './PietileCarousel';
