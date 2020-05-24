@@ -3,15 +3,13 @@
 [![npm version](https://badgen.net/npm/v/pietile-carousel?color=56C838)](https://www.npmjs.com/package/pietile-carousel)
 [![install size](https://badgen.net/packagephobia/install/pietile-carousel)](https://packagephobia.now.sh/result?p=pietile-carousel)
 
-React carousel based on [react-spring](https://github.com/react-spring/react-spring) and [react-use-gesture](https://github.com/react-spring/react-use-gesture) which tries to minimize amount of repaints and be simple in use.
-
-<img src="https://media.giphy.com/media/1gRsY9qTHyJrYTxGYS/giphy.gif" />
+React carousel based on [react-spring](https://github.com/react-spring/react-spring) and [react-use-gesture](https://github.com/react-spring/react-use-gesture) without repaints and simple in use.
 
 ## Features
 
 - Doesn't require to specify items dimensions (pure css solution)
 - Relies on translates for movements (zero paints)
-- Arbitary number of visible items
+- Arbitrary number of visible items
 - Сyclicality
 
 ## Installation
@@ -77,11 +75,11 @@ function App() {
 
 ### Methods
 
-| name            | description     |
-| :-------------- | :-------------- |
-| moveLeft()      | Scroll left     |
-| moveRight()     | Scroll right    |
-| scrollTo(index) | Scroll to index |
+| name          | description     |
+| :------------ | :-------------- |
+| moveLeft()    | Scroll left     |
+| moveRight()   | Scroll right    |
+| moveTo(index) | Scroll to index |
 
 ## License
 
