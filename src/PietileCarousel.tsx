@@ -28,18 +28,10 @@ interface Props {
 
 export const PietileCarousel = React.forwardRef<PietileCarouselHandle, Props>(
   (
-    {
-      autoplayInterval = 0,
-      count = 1,
-      children,
-      draggable = true,
-      margin = 0,
-      onChange,
-      ...props
-    }: Props,
+    { autoplayInterval = 0, count = 1, children, draggable = true, margin = 0, onChange, ...props },
     ref: React.Ref<PietileCarouselHandle>,
   ) => {
-    const sliderRef = React.useRef<HTMLElement>(null);
+    const sliderRef = React.useRef<HTMLDivElement>(null);
     const { index, set } = useAnimation(React.Children.count(children), onChange);
 
     const autoplay = useAutoplay({ interval: autoplayInterval, index, set });
@@ -57,7 +49,7 @@ export const PietileCarousel = React.forwardRef<PietileCarouselHandle, Props>(
 
         autoplay.stop();
       },
-      onEnd: (event: React.SyntheticEvent) => {
+      onEnd: (event?: React.SyntheticEvent) => {
         if (!dragging.current) {
           return;
         }
@@ -72,7 +64,7 @@ export const PietileCarousel = React.forwardRef<PietileCarouselHandle, Props>(
 
         event.target.addEventListener(
           'click',
-          e => {
+          (e) => {
             e.preventDefault();
           },
           { once: true },

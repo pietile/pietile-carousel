@@ -8,7 +8,7 @@ type Props = {
   index: number;
   margin: number;
   style?: React.CSSProperties;
-  innerRef: any;
+  innerRef: React.Ref<HTMLDivElement>;
 } & React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
 
 export function Slider({
