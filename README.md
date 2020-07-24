@@ -1,7 +1,7 @@
 # Pietile Carousel
 
 [![npm version](https://badgen.net/npm/v/pietile-carousel?color=56C838)](https://www.npmjs.com/package/pietile-carousel)
-[![install size](https://badgen.net/packagephobia/install/pietile-carousel)](https://packagephobia.now.sh/result?p=pietile-carousel)
+[![minzipped bundle size](https://badgen.net/bundlephobia/minzip/pietile-carousel)](https://bundlephobia.com/result?p=pietile-carousel)
 
 React carousel based on [react-spring](https://github.com/react-spring/react-spring) and [react-use-gesture](https://github.com/react-spring/react-use-gesture) without repaints and simple in use.
 
