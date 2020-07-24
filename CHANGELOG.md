@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.0.2
+
+- Use `tslib`
+- Mark the package as sideEffects free
+
 ## 2.0.1
 
 - Type for ImperativeHandle
