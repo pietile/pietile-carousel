@@ -5,8 +5,6 @@ import { useGesture } from 'react-use-gesture';
 
 import { SpringValue } from './types';
 
-import { FullGestureState, Vector2 } from 'react-use-gesture/dist/types';
-
 interface Config {
   count: number;
   enabled: boolean;
@@ -15,7 +13,7 @@ interface Config {
   ref: RefObject<HTMLElement>;
   set: SetUpdateFn<SpringValue>;
   onStart: () => void;
-  onEnd: (event: React.SyntheticEvent) => void;
+  onEnd: (event?: React.SyntheticEvent) => void;
 }
 
 function calcItemWidth(ref: RefObject<HTMLElement>, count: number, margin: number): number {
@@ -34,8 +32,14 @@ export function useDrag({ count, enabled, index, margin, ref, set, onStart, onEn
       onDragStart: () => {
         onStart();
       },
-      onDrag: ({ down, memo, movement: [mx], vxvy: [vx] }: FullGestureState<'drag'>) => {
-        const itemWidth = memo || calcItemWidth(ref, count, margin);
+      onDrag: ({ down, memo, movement: [mx], vxvy: [vx] }) => {
+        let itemWidth: number;
+        if (memo && typeof memo === 'number') {
+          itemWidth = memo;
+        } else {
+          itemWidth = calcItemWidth(ref, count, margin);
+        }
+
         let newIndex = -mx / itemWidth;
 
         if (!down) {
@@ -62,7 +66,7 @@ export function useDrag({ count, enabled, index, margin, ref, set, onStart, onEn
 
         return itemWidth;
       },
-      onDragEnd: (state: any) => {
+      onDragEnd: (state) => {
         onEnd(state.event);
       },
     },
@@ -71,7 +75,7 @@ export function useDrag({ count, enabled, index, margin, ref, set, onStart, onEn
       drag: {
         filterTaps: true,
         axis: 'x',
-        initial: (): Vector2 => {
+        initial: () => {
           const itemWidth = calcItemWidth(ref, count, margin);
 
           return [-itemWidth * index.getValue(), 0];
