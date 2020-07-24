@@ -81,6 +81,10 @@ function App() {
 | moveRight()   | Scroll right    |
 | moveTo(index) | Scroll to index |
 
+## Note
+
+Carousel protects nested links (a-tag's) from undesirable behavior(link click is being processes when user starts dragging and release mouse outside of carousel) by calling `preventDefault` for correspondent `click` event. If you are handling clicks manually you can check [defaultPrevented](https://developer.mozilla.org/en-US/docs/Web/API/Event/defaultPrevented) when processing your event.
+
 ## License
 
 Pietile Carousel is MIT License.
