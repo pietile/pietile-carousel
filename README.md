@@ -83,7 +83,7 @@ function App() {
 
 ## Note
 
-Carousel protects nested links (a-tag's) from undesirable behavior(link click is being processes when user starts dragging and release mouse outside of carousel) by calling `preventDefault` for correspondent `click` event. If you are handling clicks manually you can check [defaultPrevented](https://developer.mozilla.org/en-US/docs/Web/API/Event/defaultPrevented) when processing your event.
+Carousel protects nesting links (a-tag's) from undesirable behavior (link click is being processed when the user starts dragging and release the mouse outside of the carousel) by calling `preventDefault` for the correspondent `click` event. If you are handling clicks manually you can check [defaultPrevented](https://developer.mozilla.org/en-US/docs/Web/API/Event/defaultPrevented) when processing your event.
 
 ## License
 
