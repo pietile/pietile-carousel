@@ -49,7 +49,7 @@ export const PietileCarousel = React.forwardRef<PietileCarouselHandle, Props>(
 
         autoplay.stop();
       },
-      onEnd: (event?: React.SyntheticEvent) => {
+      onEnd: (event) => {
         if (!dragging.current) {
           return;
         }
@@ -62,7 +62,7 @@ export const PietileCarousel = React.forwardRef<PietileCarouselHandle, Props>(
           return;
         }
 
-        event.target.addEventListener(
+        event.target?.addEventListener(
           'click',
           (e) => {
             e.preventDefault();

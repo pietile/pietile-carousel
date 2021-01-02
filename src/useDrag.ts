@@ -13,7 +13,7 @@ interface Config {
   ref: RefObject<HTMLElement>;
   set: SetUpdateFn<SpringValue>;
   onStart: () => void;
-  onEnd: (event?: React.SyntheticEvent) => void;
+  onEnd: (event: React.PointerEvent<Element> | PointerEvent) => void;
 }
 
 function calcItemWidth(ref: RefObject<HTMLElement>, count: number, margin: number): number {

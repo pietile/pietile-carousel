@@ -52,5 +52,6 @@ module.exports = {
     'react/jsx-props-no-spreading': 'off',
     'react/jsx-wrap-multilines': 'off',
     'react/prop-types': 'off',
+    'react/require-default-props': 'off',
   },
 };

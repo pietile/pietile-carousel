@@ -12,7 +12,7 @@ interface Return {
 export function useAnimation(childrenCount: number, onChange?: (index: number) => void): Return {
   const prevIndex = React.useRef<number>(0);
 
-  const [{ index }, set] = useSpring(() => ({
+  const [{ index }, set] = useSpring<{ index: number }>(() => ({
     index: 0,
     onFrame: (value: AnimatedValue<SpringValue>): void => {
       if (!onChange) {
