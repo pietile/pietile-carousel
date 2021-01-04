@@ -44,6 +44,7 @@ module.exports = {
     'no-empty-function': 'off',
     'no-plusplus': 'off',
     'no-useless-constructor': 'off',
+    'prefer-arrow-callback': 'off',
     'react-hooks/exhaustive-deps': 'warn',
     'react-hooks/rules-of-hooks': 'error',
     'react/jsx-curly-brace-presence': 'off',

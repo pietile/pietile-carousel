@@ -1,13 +1,9 @@
 import * as React from 'react';
 
-import { animated } from 'react-spring';
-
 import { Slider } from './Slider';
 import { useAnimation } from './useAnimation';
 import { useAutoplay } from './useAutoplay';
 import { useDrag } from './useDrag';
-
-const AnimatedSlider = animated(Slider);
 
 export interface PietileCarouselHandle {
   moveRight: () => void;
@@ -95,9 +91,9 @@ export const PietileCarousel = React.forwardRef<PietileCarouselHandle, Props>(
     );
 
     return (
-      <AnimatedSlider innerRef={sliderRef} index={index} count={count} margin={margin} {...props}>
+      <Slider ref={sliderRef} index={index} count={count} margin={margin} {...props}>
         {children}
-      </AnimatedSlider>
+      </Slider>
     );
   },
 );

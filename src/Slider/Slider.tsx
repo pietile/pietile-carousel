@@ -1,59 +1,78 @@
 import * as React from 'react';
 
-import { FrameContainer } from './FrameContainer';
+import { OpaqueInterpolation, animated } from 'react-spring';
+
+import { ItemWrapper } from './ItemWrapper';
 
 type Props = {
   children?: React.ReactNode;
   count: number;
-  index: number;
+  index: OpaqueInterpolation<number>;
   margin: number;
   style?: React.CSSProperties;
-  innerRef: React.Ref<HTMLDivElement>;
 } & React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
 
-export function Slider({
-  children,
-  style = {},
-  margin,
-  count,
-  index,
-  innerRef,
-  ...props
-}: Props): JSX.Element {
+export const Slider = React.forwardRef<HTMLDivElement, Props>(function Slider(
+  { children, style = {}, margin, count, index, ...props },
+  ref,
+): JSX.Element {
+  const childrenCount = React.Children.count(children);
+  const tail = childrenCount - count;
+  const frameWidth = 100 / childrenCount;
+
+  const startIndex = index.interpolate((value) => {
+    if (!tail) {
+      return 0;
+    }
+
+    if (value >= 0) {
+      return (Math.floor(value / tail) * tail) % childrenCount;
+    }
+
+    return (
+      (childrenCount + ((Math.ceil(value / tail) * tail - tail) % childrenCount)) % childrenCount
+    );
+  });
+
+  const translate = index.interpolate((value) => {
+    if (!tail) {
+      return 0;
+    }
+
+    if (value >= 0) {
+      return frameWidth * (value % tail);
+    }
+
+    return frameWidth * (tail + (value % tail));
+  });
+
   const containerStyle = {
     ...style,
     overflow: 'hidden',
   };
 
-  const childrenCount = React.Children.count(children);
-  const tail = childrenCount - count;
-  const frameWidth = 100 / React.Children.count(children);
-
-  let startIndex;
-  let translate;
-  if (!tail) {
-    startIndex = 0;
-    translate = 0;
-  } else if (index >= 0) {
-    startIndex = (Math.floor(index / tail) * tail) % childrenCount;
-    translate = frameWidth * (index % tail);
-  } else {
-    startIndex =
-      (childrenCount + ((Math.ceil(index / tail) * tail - tail) % childrenCount)) % childrenCount;
-    translate = frameWidth * (tail + (index % tail));
-  }
-
-  const sliderStyle = {
+  const sliderStyle: React.CSSProperties = {
     height: '100%',
-    transform: `translateX(${-translate}%)`,
+    transform: translate.interpolate((value) => `translateX(${-value}%)`),
     willChange: 'transform',
+    display: 'flex',
+    width: `calc(((100% - ${(count - 1) * margin}px) / ${count} + ${margin}px)*${childrenCount})`,
   };
 
   return (
-    <div ref={innerRef} style={containerStyle} {...props}>
-      <FrameContainer style={sliderStyle} startIndex={startIndex} margin={margin} count={count}>
-        {children}
-      </FrameContainer>
+    <div ref={ref} style={containerStyle} {...props}>
+      <animated.div style={sliderStyle}>
+        {React.Children.map(children, (child, i) => (
+          <ItemWrapper
+            childrenCount={childrenCount}
+            index={i}
+            margin={margin}
+            startIndex={startIndex}
+          >
+            {child}
+          </ItemWrapper>
+        ))}
+      </animated.div>
     </div>
   );
-}
+});
