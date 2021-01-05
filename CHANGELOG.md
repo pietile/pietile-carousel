@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.2.0
+
+- Reduce renders amount
+
 ## 2.1.1
 
 - Use `tslib`
