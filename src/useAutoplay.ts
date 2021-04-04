@@ -35,7 +35,7 @@ export function useAutoplay(index: MotionValue<number>, interval: number): Contr
   }, [index, interval, timer, stop]);
 
   React.useEffect(() => {
-    // start();
+    start();
 
     return (): void => {
       stop();

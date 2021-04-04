@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useImperativeHandle } from 'react';
 
-import { animate, motion, useMotionValue } from 'framer-motion';
+import { animate, motion, useMotionValue, PanInfo } from 'framer-motion';
 
 import { Slider } from './Slider';
 import { useAutoplay } from './useAutoplay';
-import { useDrag } from './useDrag';
+import { usePan } from './usePan';
+import { useOnChange } from './useOnChange';
 
 const MotionSlider = motion(Slider);
 
@@ -33,19 +34,15 @@ export const PietileCarousel = React.forwardRef<PietileCarouselHandle, Props>(
     const sliderRef = React.useRef<HTMLDivElement>(null);
     const index = useMotionValue(0);
 
-    const autoplay = useAutoplay(index, autoplayInterval);
-
-    const childrenCount = React.Children.count(children);
-
-    const drag = useDrag({
-      count,
-      enabled: !!draggable,
+    useOnChange({
+      childrenCount: React.Children.count(children),
       index,
-      margin,
-      ref: sliderRef,
+      onChange,
     });
 
-    React.useImperativeHandle(
+    const autoplay = useAutoplay(index, autoplayInterval);
+
+    useImperativeHandle(
       ref,
       () => ({
         moveRight: (): void => {
@@ -80,28 +77,30 @@ export const PietileCarousel = React.forwardRef<PietileCarouselHandle, Props>(
       [autoplay, index],
     );
 
-    useEffect(() => {
-      let prevIndex = 0;
+    const panHandlers = usePan({
+      count,
+      index,
+      margin,
+      ref: sliderRef,
+    });
 
-      const unsubscribe = index.onChange((value) => {
-        if (!onChange) {
-          return;
-        }
+    const onPanStart = useCallback(
+      (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+        autoplay.stop();
 
-        const newIndex = ((Math.round(value) % childrenCount) + childrenCount) % childrenCount;
-        if (newIndex === prevIndex) {
-          return;
-        }
+        panHandlers.onPanStart(event, info);
+      },
+      [autoplay, panHandlers],
+    );
 
-        prevIndex = newIndex;
+    const onPanEnd = useCallback(
+      (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+        autoplay.start();
 
-        onChange(newIndex);
-      });
-
-      return () => {
-        unsubscribe();
-      };
-    }, [index, childrenCount, onChange]);
+        panHandlers.onPanEnd(event, info);
+      },
+      [autoplay, panHandlers],
+    );
 
     return (
       <MotionSlider
@@ -109,7 +108,9 @@ export const PietileCarousel = React.forwardRef<PietileCarouselHandle, Props>(
         index={index}
         count={count}
         margin={margin}
-        {...drag}
+        onPanStart={onPanStart}
+        onPan={panHandlers.onPan}
+        onPanEnd={onPanEnd}
         {...props}
       >
         {children}

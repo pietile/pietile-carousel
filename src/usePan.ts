@@ -1,14 +1,15 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
-import { animate, MotionValue, PanInfo } from 'framer-motion';
+import { animate, MotionValue, PanHandlers, PanInfo } from 'framer-motion';
 
 interface Config {
   count: number;
-  enabled: boolean;
   index: MotionValue<number>;
   margin: number;
   ref: React.RefObject<HTMLElement>;
 }
+
+type Result = Required<Pick<PanHandlers, 'onPanStart' | 'onPan' | 'onPanEnd'>>;
 
 function calcItemWidth(ref: React.RefObject<HTMLElement>, count: number, margin: number): number {
   if (!ref.current) {
@@ -20,7 +21,7 @@ function calcItemWidth(ref: React.RefObject<HTMLElement>, count: number, margin:
   return (width - margin * (count - 1)) / count + margin;
 }
 
-export function useDrag({ count, index, margin, ref }: Config) {
+export function usePan({ count, index, margin, ref }: Config): Result {
   const [initial] = useState(() => ({
     dragging: false,
     index: index.get(),
@@ -77,5 +78,12 @@ export function useDrag({ count, index, margin, ref }: Config) {
     [index, initial],
   );
 
-  return { onPanStart, onPan, onPanEnd };
+  return useMemo(
+    () => ({
+      onPanStart,
+      onPan,
+      onPanEnd,
+    }),
+    [onPanStart, onPan, onPanEnd],
+  );
 }
