@@ -1,11 +1,12 @@
 import React, { useCallback, useImperativeHandle } from 'react';
 
-import { animate, motion, useMotionValue, PanInfo } from 'framer-motion';
+import { PanInfo, motion, useMotionValue } from 'framer-motion';
 
 import { Slider } from './Slider';
 import { useAutoplay } from './useAutoplay';
-import { usePan } from './usePan';
 import { useOnChange } from './useOnChange';
+import { usePan } from './usePan';
+import { animateSpring } from './utils';
 
 const MotionSlider = motion(Slider);
 
@@ -50,28 +51,19 @@ export const PietileCarousel = React.forwardRef<PietileCarouselHandle, Props>(
 
           const roundIndex = Number(index.get().toFixed(4));
 
-          animate(index, Math.floor(roundIndex - 1), {
-            type: 'spring',
-            bounce: 0,
-          });
+          animateSpring(index, Math.floor(roundIndex - 1));
         },
         moveLeft: (): void => {
           autoplay.start();
 
           const roundIndex = Number(index.get().toFixed(4));
 
-          animate(index, Math.ceil(roundIndex + 1), {
-            type: 'spring',
-            bounce: 0,
-          });
+          animateSpring(index, Math.ceil(roundIndex + 1));
         },
         moveTo: (newIndex: number): void => {
           autoplay.start();
 
-          animate(index, newIndex, {
-            type: 'spring',
-            bounce: 0,
-          });
+          animateSpring(index, newIndex);
         },
       }),
       [autoplay, index],

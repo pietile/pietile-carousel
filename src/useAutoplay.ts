@@ -1,6 +1,8 @@
 import React from 'react';
 
-import { animate, MotionValue } from 'framer-motion';
+import { MotionValue } from 'framer-motion';
+
+import { animateSpring } from './utils';
 
 interface Controls {
   stop: () => void;
@@ -27,10 +29,7 @@ export function useAutoplay(index: MotionValue<number>, interval: number): Contr
     }
 
     timer.current = window.setInterval(() => {
-      animate(index, Math.floor(index.get() + 1), {
-        type: 'spring',
-        bounce: 0,
-      });
+      animateSpring(index, Math.floor(index.get() + 1));
     }, interval);
   }, [index, interval, timer, stop]);
 

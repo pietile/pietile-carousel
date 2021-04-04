@@ -1,6 +1,8 @@
 import React, { useCallback, useMemo, useState } from 'react';
 
-import { animate, MotionValue, PanHandlers, PanInfo } from 'framer-motion';
+import { MotionValue, PanHandlers, PanInfo } from 'framer-motion';
+
+import { animateSpring } from './utils';
 
 interface Config {
   count: number;
@@ -44,7 +46,7 @@ export function usePan({ count, index, margin, ref }: Config): Result {
   );
 
   const onPanEnd = useCallback(
-    (event, info: PanInfo) => {
+    (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
       // Prevent click after drag
       initial.dragging = false;
 
@@ -69,11 +71,7 @@ export function usePan({ count, index, margin, ref }: Config): Result {
         newIndex = Math.round(index.get());
       }
 
-      animate(index, newIndex, {
-        bounce: 0,
-        type: 'spring',
-        velocity: 0,
-      });
+      animateSpring(index, newIndex);
     },
     [index, initial],
   );
