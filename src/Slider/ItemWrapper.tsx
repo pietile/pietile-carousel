@@ -1,13 +1,13 @@
-import * as React from 'react';
+import React from 'react';
 
-import { OpaqueInterpolation, animated } from 'react-spring';
+import { MotionValue, motion, useMotionTemplate, useTransform, MotionStyle } from 'framer-motion';
 
 interface Props {
   children: React.ReactNode;
   childrenCount: number;
   index: number;
   margin: number;
-  startIndex: OpaqueInterpolation<number>;
+  startIndex: MotionValue<number>;
 }
 
 export function ItemWrapper({
@@ -17,17 +17,19 @@ export function ItemWrapper({
   margin,
   startIndex,
 }: Props): JSX.Element {
-  const pos = startIndex.interpolate(
+  const pos = useTransform(
+    startIndex,
     (value) => (value <= index ? -value : childrenCount - value) * 100,
   );
+  const transform = useMotionTemplate`translateX(${pos}%)`;
 
-  const style: React.CSSProperties = {
+  const style: MotionStyle = {
     boxSizing: 'border-box',
     flex: 1,
-    transform: pos.interpolate((value) => `translateX(${value}%)`),
+    transform,
     willChange: 'transform',
     paddingRight: margin,
   };
 
-  return <animated.div style={style}>{children}</animated.div>;
+  return <motion.div style={style}>{children}</motion.div>;
 }

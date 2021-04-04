@@ -1,9 +1,12 @@
-import * as React from 'react';
+import React, { useEffect } from 'react';
+
+import { animate, motion, useMotionValue } from 'framer-motion';
 
 import { Slider } from './Slider';
-import { useAnimation } from './useAnimation';
 import { useAutoplay } from './useAutoplay';
 import { useDrag } from './useDrag';
+
+const MotionSlider = motion(Slider);
 
 export interface PietileCarouselHandle {
   moveRight: () => void;
@@ -28,44 +31,18 @@ export const PietileCarousel = React.forwardRef<PietileCarouselHandle, Props>(
     ref: React.Ref<PietileCarouselHandle>,
   ) => {
     const sliderRef = React.useRef<HTMLDivElement>(null);
-    const { index, set } = useAnimation(React.Children.count(children), onChange);
+    const index = useMotionValue(0);
 
-    const autoplay = useAutoplay({ interval: autoplayInterval, index, set });
+    const autoplay = useAutoplay(index, autoplayInterval);
 
-    const dragging = React.useRef<boolean>(false);
-    useDrag({
+    const childrenCount = React.Children.count(children);
+
+    const drag = useDrag({
       count,
       enabled: !!draggable,
       index,
       margin,
       ref: sliderRef,
-      set,
-      onStart: () => {
-        dragging.current = true;
-
-        autoplay.stop();
-      },
-      onEnd: (event) => {
-        if (!dragging.current) {
-          return;
-        }
-
-        dragging.current = false;
-
-        autoplay.start();
-
-        if (!(event instanceof MouseEvent)) {
-          return;
-        }
-
-        event.target?.addEventListener(
-          'click',
-          (e) => {
-            e.preventDefault();
-          },
-          { once: true },
-        );
-      },
     });
 
     React.useImperativeHandle(
@@ -74,26 +51,69 @@ export const PietileCarousel = React.forwardRef<PietileCarouselHandle, Props>(
         moveRight: (): void => {
           autoplay.start();
 
-          set({ index: Math.floor(index.getValue() - 1) });
+          const roundIndex = Number(index.get().toFixed(4));
+
+          animate(index, Math.floor(roundIndex - 1), {
+            type: 'spring',
+            bounce: 0,
+          });
         },
         moveLeft: (): void => {
           autoplay.start();
 
-          set({ index: Math.ceil(index.getValue() + 1) });
+          const roundIndex = Number(index.get().toFixed(4));
+
+          animate(index, Math.ceil(roundIndex + 1), {
+            type: 'spring',
+            bounce: 0,
+          });
         },
         moveTo: (newIndex: number): void => {
           autoplay.start();
 
-          set({ index: newIndex });
+          animate(index, newIndex, {
+            type: 'spring',
+            bounce: 0,
+          });
         },
       }),
-      [autoplay, index, set],
+      [autoplay, index],
     );
 
+    useEffect(() => {
+      let prevIndex = 0;
+
+      const unsubscribe = index.onChange((value) => {
+        if (!onChange) {
+          return;
+        }
+
+        const newIndex = ((Math.round(value) % childrenCount) + childrenCount) % childrenCount;
+        if (newIndex === prevIndex) {
+          return;
+        }
+
+        prevIndex = newIndex;
+
+        onChange(newIndex);
+      });
+
+      return () => {
+        unsubscribe();
+      };
+    }, [index, childrenCount, onChange]);
+
     return (
-      <Slider ref={sliderRef} index={index} count={count} margin={margin} {...props}>
+      <MotionSlider
+        ref={sliderRef}
+        index={index}
+        count={count}
+        margin={margin}
+        {...drag}
+        {...props}
+      >
         {children}
-      </Slider>
+      </MotionSlider>
     );
   },
 );

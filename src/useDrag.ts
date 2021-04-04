@@ -1,22 +1,16 @@
-import { RefObject, useEffect } from 'react';
+import React, { useCallback, useState } from 'react';
 
-import { OpaqueInterpolation, SetUpdateFn } from 'react-spring';
-import { useGesture } from 'react-use-gesture';
-
-import { SpringValue } from './types';
+import { animate, MotionValue, PanInfo } from 'framer-motion';
 
 interface Config {
   count: number;
   enabled: boolean;
-  index: OpaqueInterpolation<number>;
+  index: MotionValue<number>;
   margin: number;
-  ref: RefObject<HTMLElement>;
-  set: SetUpdateFn<SpringValue>;
-  onStart: () => void;
-  onEnd: (event: React.PointerEvent<Element> | PointerEvent) => void;
+  ref: React.RefObject<HTMLElement>;
 }
 
-function calcItemWidth(ref: RefObject<HTMLElement>, count: number, margin: number): number {
+function calcItemWidth(ref: React.RefObject<HTMLElement>, count: number, margin: number): number {
   if (!ref.current) {
     return 0;
   }
@@ -26,69 +20,62 @@ function calcItemWidth(ref: RefObject<HTMLElement>, count: number, margin: numbe
   return (width - margin * (count - 1)) / count + margin;
 }
 
-export function useDrag({ count, enabled, index, margin, ref, set, onStart, onEnd }: Config): void {
-  const bind = useGesture(
-    {
-      onDragStart: () => {
-        onStart();
-      },
-      onDrag: ({ down, memo, movement: [mx], vxvy: [vx] }) => {
-        let itemWidth: number;
-        if (memo && typeof memo === 'number') {
-          itemWidth = memo;
-        } else {
-          itemWidth = calcItemWidth(ref, count, margin);
-        }
+export function useDrag({ count, index, margin, ref }: Config) {
+  const [initial] = useState(() => ({
+    dragging: false,
+    index: index.get(),
+    itemWidth: calcItemWidth(ref, count, margin),
+  }));
 
-        let newIndex = -mx / itemWidth;
+  const onPanStart = useCallback(() => {
+    initial.dragging = true;
+    initial.index = index.get();
+    initial.itemWidth = calcItemWidth(ref, count, margin);
+  }, [ref, count, index, initial, margin]);
 
-        if (!down) {
-          if (vx > 0.5) {
-            newIndex = Math.floor(newIndex);
-          } else if (vx < -0.5) {
-            newIndex = Math.ceil(newIndex);
-          } else {
-            newIndex = Math.round(newIndex);
-          }
+  const onPan = useCallback(
+    (_, info: PanInfo) => {
+      const newIndex = initial.index - info.offset.x / initial.itemWidth;
 
-          set({
-            index: newIndex,
-            immediate: false,
-          });
-
-          return 0;
-        }
-
-        set({
-          index: newIndex,
-          immediate: true,
-        });
-
-        return itemWidth;
-      },
-      onDragEnd: (state) => {
-        onEnd(state.event);
-      },
+      index.set(newIndex);
     },
-    {
-      domTarget: ref,
-      drag: {
-        filterTaps: true,
-        axis: 'x',
-        initial: () => {
-          const itemWidth = calcItemWidth(ref, count, margin);
-
-          return [-itemWidth * index.getValue(), 0];
-        },
-      },
-    },
+    [index, initial],
   );
 
-  useEffect((): undefined | (() => void) => {
-    if (!enabled) {
-      return undefined;
-    }
+  const onPanEnd = useCallback(
+    (event, info: PanInfo) => {
+      // Prevent click after drag
+      initial.dragging = false;
 
-    return bind() as () => void;
-  }, [bind, enabled, ref]);
+      if (event instanceof MouseEvent) {
+        event.target?.addEventListener(
+          'click',
+          (e) => {
+            e.preventDefault();
+          },
+          { once: true },
+        );
+      }
+
+      // Adjust position
+      let newIndex: number;
+
+      if (info.velocity.x > 100) {
+        newIndex = Math.floor(index.get());
+      } else if (info.velocity.x < -100) {
+        newIndex = Math.ceil(index.get());
+      } else {
+        newIndex = Math.round(index.get());
+      }
+
+      animate(index, newIndex, {
+        bounce: 0,
+        type: 'spring',
+        velocity: 0,
+      });
+    },
+    [index, initial],
+  );
+
+  return { onPanStart, onPan, onPanEnd };
 }
