@@ -1,6 +1,6 @@
 import React, { useCallback, useImperativeHandle } from 'react';
 
-import { PanInfo, motion, useMotionValue } from 'framer-motion';
+import { PanInfo, motion, useMotionValue, PanHandlers } from 'framer-motion';
 
 import { Slider } from './Slider';
 import { useAutoplay } from './useAutoplay';
@@ -94,15 +94,22 @@ export const PietileCarousel = React.forwardRef<PietileCarouselHandle, Props>(
       [autoplay, panHandlers],
     );
 
+    let panProps: PanHandlers = {};
+    if (draggable) {
+      panProps = {
+        onPanStart,
+        onPan: panHandlers.onPan,
+        onPanEnd,
+      };
+    }
+
     return (
       <MotionSlider
         ref={sliderRef}
         index={index}
         count={count}
         margin={margin}
-        onPanStart={onPanStart}
-        onPan={panHandlers.onPan}
-        onPanEnd={onPanEnd}
+        {...panProps}
         {...props}
       >
         {children}
