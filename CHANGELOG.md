@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.0.0
+
+- Rewritten with Framer Motion
+
 ## 2.2.0
 
 - Reduce renders amount
