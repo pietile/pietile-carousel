@@ -26,6 +26,8 @@ or using npm
 npm install -S pietile-carousel
 ```
 
+Pietile Carousel **depends** on [Framer Motion](https://github.com/framer/motion) which is a peer dependency so be sure that it's installed in you project (if not then install it using `yarn add framer-motion` or `npm install -S framer-motion`)
+
 ## Usage
 
 Every item is wrapped in container where it can layout it's content. The size of container depends on the size of carousel and amount of visible items. You can use any styling system you want to set styles. Get ref and use moveLeft/moveRight/moveTo methods for scroll.
