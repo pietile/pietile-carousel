@@ -1,11 +1,11 @@
 import React, { useCallback, useImperativeHandle } from 'react';
 
-import { PanInfo, motion, useMotionValue, PanHandlers } from 'framer-motion';
+import { PanHandlers, motion, useMotionValue } from 'framer-motion';
 
 import { Slider } from './Slider';
 import { useAutoplay } from './useAutoplay';
 import { useOnChange } from './useOnChange';
-import { usePan } from './usePan';
+import { OnPan, usePan } from './usePan';
 import { animateSpring } from './utils';
 
 const MotionSlider = motion(Slider);
@@ -76,20 +76,20 @@ export const PietileCarousel = React.forwardRef<PietileCarouselHandle, Props>(
       ref: sliderRef,
     });
 
-    const onPanStart = useCallback(
-      (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+    const onPanStart: OnPan = useCallback(
+      (...args) => {
         autoplay.stop();
 
-        panHandlers.onPanStart(event, info);
+        panHandlers.onPanStart(...args);
       },
       [autoplay, panHandlers],
     );
 
-    const onPanEnd = useCallback(
-      (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+    const onPanEnd: OnPan = useCallback(
+      (...args) => {
         autoplay.start();
 
-        panHandlers.onPanEnd(event, info);
+        panHandlers.onPanEnd(...args);
       },
       [autoplay, panHandlers],
     );

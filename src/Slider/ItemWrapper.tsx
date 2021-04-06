@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { MotionValue, motion, useMotionTemplate, useTransform, MotionStyle } from 'framer-motion';
+import { MotionStyle, MotionValue, motion, useMotionTemplate, useTransform } from 'framer-motion';
 
 interface Props {
   children: React.ReactNode;

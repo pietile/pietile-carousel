@@ -1,5 +1,6 @@
-import { MotionValue } from 'framer-motion';
 import { useEffect } from 'react';
+
+import { MotionValue } from 'framer-motion';
 
 interface Config {
   childrenCount: number;

@@ -1,8 +1,10 @@
 import React, { useCallback, useMemo, useState } from 'react';
 
-import { MotionValue, PanHandlers, PanInfo } from 'framer-motion';
+import { MotionValue, PanInfo } from 'framer-motion';
 
 import { animateSpring } from './utils';
+
+export type OnPan = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => void;
 
 interface Config {
   count: number;
@@ -11,7 +13,11 @@ interface Config {
   ref: React.RefObject<HTMLElement>;
 }
 
-type Result = Required<Pick<PanHandlers, 'onPanStart' | 'onPan' | 'onPanEnd'>>;
+interface Result {
+  onPanStart: OnPan;
+  onPan: OnPan;
+  onPanEnd: OnPan;
+}
 
 function calcItemWidth(ref: React.RefObject<HTMLElement>, count: number, margin: number): number {
   if (!ref.current) {

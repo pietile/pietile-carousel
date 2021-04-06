@@ -1,4 +1,4 @@
-import { animate, MotionValue } from 'framer-motion';
+import { MotionValue, animate } from 'framer-motion';
 
 export function animateSpring(index: MotionValue<number>, to: number): void {
   animate(index, to, {
