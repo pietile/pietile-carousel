@@ -11,9 +11,9 @@ import { animateSpring } from './utils';
 const MotionSlider = motion(Slider);
 
 export interface PietileCarouselHandle {
-  moveRight: () => void;
-  moveLeft: () => void;
-  moveTo: (index: number) => void;
+  slideNext: () => void;
+  slidePrev: () => void;
+  slideTo: (index: number) => void;
 }
 
 interface Props {
@@ -46,21 +46,21 @@ export const PietileCarousel = React.forwardRef<PietileCarouselHandle, Props>(
     useImperativeHandle(
       ref,
       () => ({
-        moveRight: (): void => {
-          autoplay.start();
-
-          const roundIndex = Number(index.get().toFixed(4));
-
-          animateSpring(index, Math.floor(roundIndex - 1));
-        },
-        moveLeft: (): void => {
+        slideNext: (): void => {
           autoplay.start();
 
           const roundIndex = Number(index.get().toFixed(4));
 
           animateSpring(index, Math.ceil(roundIndex + 1));
         },
-        moveTo: (newIndex: number): void => {
+        slidePrev: (): void => {
+          autoplay.start();
+
+          const roundIndex = Number(index.get().toFixed(4));
+
+          animateSpring(index, Math.floor(roundIndex - 1));
+        },
+        slideTo: (newIndex: number): void => {
           autoplay.start();
 
           animateSpring(index, newIndex);

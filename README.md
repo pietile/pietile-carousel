@@ -77,11 +77,11 @@ function App() {
 
 ### Methods
 
-| name          | description     |
-| :------------ | :-------------- |
-| moveLeft()    | Scroll left     |
-| moveRight()   | Scroll right    |
-| moveTo(index) | Scroll to index |
+| name           | description              |
+| :------------- | :----------------------- |
+| slideNext()    | Scroll to next slide     |
+| slidePrev()    | Scroll to previous slide |
+| slideTo(index) | Scroll to index          |
 
 ## Note
 
