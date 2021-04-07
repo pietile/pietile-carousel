@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.0.1
+
+- Move back to just tsc build
+
 ## 3.0.0
 
 - Rewritten with [Framer Motion](https://github.com/framer/motion)

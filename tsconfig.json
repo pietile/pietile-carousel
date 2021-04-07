@@ -4,9 +4,7 @@
     "esModuleInterop": true,
     "jsx": "react",
     "lib": ["dom", "es2015"],
-    "module": "ESNext",
-    "moduleResolution": "Node",
-    "noEmit": true,
+    "module": "CommonJS",
     "noFallthroughCasesInSwitch": true,
     "noImplicitAny": true,
     "noImplicitReturns": true,
@@ -14,7 +12,7 @@
     "noUnusedParameters": true,
     "outDir": "dist",
     "strict": true,
-    "target": "ESNext"
+    "target": "es5"
   },
   "include": ["src"],
   "exclude": ["node_modules"]

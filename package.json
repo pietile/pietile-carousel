@@ -1,25 +1,21 @@
 {
   "name": "pietile-carousel",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "React Carousel",
   "keywords": [
     "react",
     "carousel"
   ],
   "license": "MIT",
-  "source": "src/index.ts",
   "main": "dist/index.js",
-  "exports": "./dist/foo.modern.js",
-  "module": "dist/foo.module.js",
-  "unpkg": "dist/foo.umd.js",
   "typings": "dist/index.d.ts",
   "files": [
     "dist"
   ],
   "sideEffects": false,
   "scripts": {
-    "build": "rimraf dist && microbundle --jsx React.createElemen",
-    "dev": "rimraf dist && microbundle --jsx React.createElemen --watch"
+    "build": "rimraf dist && tsc",
+    "dev": "tsc --watch"
   },
   "peerDependencies": {
     "framer-motion": "^4.0.0",
