@@ -1,14 +1,19 @@
-import * as React from 'react';
+import React, { useCallback, useImperativeHandle } from 'react';
+
+import { PanHandlers, motion, useMotionValue } from 'framer-motion';
 
 import { Slider } from './Slider';
-import { useAnimation } from './useAnimation';
 import { useAutoplay } from './useAutoplay';
-import { useDrag } from './useDrag';
+import { useOnChange } from './useOnChange';
+import { OnPan, usePan } from './usePan';
+import { animateSpring } from './utils';
+
+const MotionSlider = motion(Slider);
 
 export interface PietileCarouselHandle {
-  moveRight: () => void;
-  moveLeft: () => void;
-  moveTo: (index: number) => void;
+  slideNext: () => void;
+  slidePrev: () => void;
+  slideTo: (index: number) => void;
 }
 
 interface Props {
@@ -28,72 +33,87 @@ export const PietileCarousel = React.forwardRef<PietileCarouselHandle, Props>(
     ref: React.Ref<PietileCarouselHandle>,
   ) => {
     const sliderRef = React.useRef<HTMLDivElement>(null);
-    const { index, set } = useAnimation(React.Children.count(children), onChange);
+    const index = useMotionValue(0);
 
-    const autoplay = useAutoplay({ interval: autoplayInterval, index, set });
+    useOnChange({
+      childrenCount: React.Children.count(children),
+      index,
+      onChange,
+    });
 
-    const dragging = React.useRef<boolean>(false);
-    useDrag({
+    const autoplay = useAutoplay(index, autoplayInterval);
+
+    useImperativeHandle(
+      ref,
+      () => ({
+        slideNext: (): void => {
+          autoplay.start();
+
+          const roundIndex = Number(index.get().toFixed(4));
+
+          animateSpring(index, Math.ceil(roundIndex + 1));
+        },
+        slidePrev: (): void => {
+          autoplay.start();
+
+          const roundIndex = Number(index.get().toFixed(4));
+
+          animateSpring(index, Math.floor(roundIndex - 1));
+        },
+        slideTo: (newIndex: number): void => {
+          autoplay.start();
+
+          animateSpring(index, newIndex);
+        },
+      }),
+      [autoplay, index],
+    );
+
+    const panHandlers = usePan({
       count,
-      enabled: !!draggable,
       index,
       margin,
       ref: sliderRef,
-      set,
-      onStart: () => {
-        dragging.current = true;
-
-        autoplay.stop();
-      },
-      onEnd: (event) => {
-        if (!dragging.current) {
-          return;
-        }
-
-        dragging.current = false;
-
-        autoplay.start();
-
-        if (!(event instanceof MouseEvent)) {
-          return;
-        }
-
-        event.target?.addEventListener(
-          'click',
-          (e) => {
-            e.preventDefault();
-          },
-          { once: true },
-        );
-      },
     });
 
-    React.useImperativeHandle(
-      ref,
-      () => ({
-        moveRight: (): void => {
-          autoplay.start();
+    const onPanStart: OnPan = useCallback(
+      (...args) => {
+        autoplay.stop();
 
-          set({ index: Math.floor(index.getValue() - 1) });
-        },
-        moveLeft: (): void => {
-          autoplay.start();
-
-          set({ index: Math.ceil(index.getValue() + 1) });
-        },
-        moveTo: (newIndex: number): void => {
-          autoplay.start();
-
-          set({ index: newIndex });
-        },
-      }),
-      [autoplay, index, set],
+        panHandlers.onPanStart(...args);
+      },
+      [autoplay, panHandlers],
     );
 
+    const onPanEnd: OnPan = useCallback(
+      (...args) => {
+        autoplay.start();
+
+        panHandlers.onPanEnd(...args);
+      },
+      [autoplay, panHandlers],
+    );
+
+    let panProps: PanHandlers = {};
+    if (draggable) {
+      panProps = {
+        onPanStart,
+        onPan: panHandlers.onPan,
+        onPanEnd,
+      };
+    }
+
     return (
-      <Slider ref={sliderRef} index={index} count={count} margin={margin} {...props}>
+      <MotionSlider
+        ref={sliderRef}
+        index={index}
+        count={count}
+        margin={margin}
+        {...panProps}
+        {...props}
+      >
         {children}
-      </Slider>
+      </MotionSlider>
     );
   },
 );

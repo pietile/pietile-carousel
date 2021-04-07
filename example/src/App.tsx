@@ -26,7 +26,7 @@ export function App(): JSX.Element {
           className="button"
           type="button"
           onClick={(): void => {
-            carousel.current?.moveLeft();
+            carousel.current?.slidePrev();
           }}
         >
           {'<'}
@@ -58,7 +58,7 @@ export function App(): JSX.Element {
           className="button"
           type="button"
           onClick={(): void => {
-            carousel.current?.moveRight();
+            carousel.current?.slideNext();
           }}
         >
           {'>'}

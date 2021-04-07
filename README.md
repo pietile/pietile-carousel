@@ -3,7 +3,7 @@
 [![npm version](https://badgen.net/npm/v/pietile-carousel?color=56C838)](https://www.npmjs.com/package/pietile-carousel)
 [![minzipped bundle size](https://badgen.net/bundlephobia/minzip/pietile-carousel)](https://bundlephobia.com/result?p=pietile-carousel)
 
-React carousel based on [react-spring](https://github.com/react-spring/react-spring) and [react-use-gesture](https://github.com/react-spring/react-use-gesture) without repaints and simple in use.
+React carousel based on [Framer Motion](https://github.com/framer/motion) without repaints and simple in use.
 
 ## Features
 
@@ -25,6 +25,8 @@ or using npm
 ```sh
 npm install -S pietile-carousel
 ```
+
+Pietile Carousel **depends** on [Framer Motion](https://github.com/framer/motion) which is a peer dependency so be sure that it's installed in you project (if not then install it using `yarn add framer-motion` or `npm install -S framer-motion`)
 
 ## Usage
 
@@ -75,11 +77,11 @@ function App() {
 
 ### Methods
 
-| name          | description     |
-| :------------ | :-------------- |
-| moveLeft()    | Scroll left     |
-| moveRight()   | Scroll right    |
-| moveTo(index) | Scroll to index |
+| name           | description              |
+| :------------- | :----------------------- |
+| slideNext()    | Scroll to next slide     |
+| slidePrev()    | Scroll to previous slide |
+| slideTo(index) | Scroll to index          |
 
 ## Note
 

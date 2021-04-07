@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.0.0
+
+- Rewritten with [Framer Motion](https://github.com/framer/motion)
+- Built with [microbundle](https://github.com/developit/microbundle)
+
 ## 2.2.0
 
 - Reduce renders amount

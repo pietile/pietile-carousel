@@ -1,21 +1,15 @@
-import * as React from 'react';
+import React from 'react';
 
-import { OpaqueInterpolation, SetUpdateFn } from 'react-spring';
+import { MotionValue } from 'framer-motion';
 
-import { SpringValue } from './types';
+import { animateSpring } from './utils';
 
 interface Controls {
   stop: () => void;
   start: () => void;
 }
 
-interface Config {
-  index: OpaqueInterpolation<number>;
-  set: SetUpdateFn<SpringValue>;
-  interval: number;
-}
-
-export function useAutoplay({ index, set, interval }: Config): Controls {
+export function useAutoplay(index: MotionValue<number>, interval: number): Controls {
   const timer = React.useRef<number>(0);
 
   const stop = React.useCallback(() => {
@@ -35,9 +29,9 @@ export function useAutoplay({ index, set, interval }: Config): Controls {
     }
 
     timer.current = window.setInterval(() => {
-      set({ index: Math.ceil(index.getValue() + 1) });
+      animateSpring(index, Math.floor(index.get() + 1));
     }, interval);
-  }, [index, interval, timer, set, stop]);
+  }, [index, interval, timer, stop]);
 
   React.useEffect(() => {
     start();
