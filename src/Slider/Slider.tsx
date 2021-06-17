@@ -49,6 +49,9 @@ export const Slider = React.forwardRef<HTMLDivElement, Props>(function Slider(
   const containerStyle = {
     ...style,
     overflow: 'hidden',
+
+    // https://github.com/framer/motion/issues/281
+    touchAction: 'pan-y',
   };
 
   const transform = useMotionTemplate`translateX(-${translate}%)`;

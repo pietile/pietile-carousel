@@ -36,11 +36,18 @@ export function usePan({ count, index, margin, ref }: Config): Result {
     itemWidth: calcItemWidth(ref, count, margin),
   }));
 
+  const onTouchMove = useCallback((event: TouchEvent) => {
+    // Prevent vertical scroll on mobile
+    event.preventDefault();
+  }, []);
+
   const onPanStart = useCallback(() => {
     initial.dragging = true;
     initial.index = index.get();
     initial.itemWidth = calcItemWidth(ref, count, margin);
-  }, [ref, count, index, initial, margin]);
+
+    document.documentElement.addEventListener('touchmove', onTouchMove, { passive: false });
+  }, [ref, count, index, initial, margin, onTouchMove]);
 
   const onPan = useCallback(
     (_, info: PanInfo) => {
@@ -78,8 +85,10 @@ export function usePan({ count, index, margin, ref }: Config): Result {
       }
 
       animateSpring(index, newIndex);
+
+      document.documentElement.removeEventListener('touchmove', onTouchMove);
     },
-    [index, initial],
+    [index, initial, onTouchMove],
   );
 
   return useMemo(
