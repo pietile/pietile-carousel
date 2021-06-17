@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.1.0
+
+- Lock body scroll while interacting with carousel
+
 ## 3.0.1
 
 - Move back to just tsc build
