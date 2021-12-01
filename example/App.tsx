@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 
-import PietileCarousel, { PietileCarouselHandle } from '../src';
+import { PietileCarousel, PietileCarouselHandle } from '../src';
 
 export function App(): JSX.Element {
   const carousel = useRef<PietileCarouselHandle>(null);
