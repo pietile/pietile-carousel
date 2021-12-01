@@ -37,7 +37,7 @@ Every item is wrapped in container where it can layout it's content. The size of
 ```jsx
 import React from 'react';
 
-import PietileCarousel from 'pietile-carousel';
+import { PietileCarousel } from 'pietile-carousel';
 
 function App() {
   const carouselStyle = {

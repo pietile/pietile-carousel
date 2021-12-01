@@ -26,6 +26,6 @@ export default defineConfig(({ command }) => {
         },
       },
     },
-    plugins: [dts()],
+    plugins: [dts({ insertTypesEntry: true })],
   };
 });
