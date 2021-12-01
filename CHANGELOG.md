@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.2.0
+
+- Build with [Vite](https://vitejs.dev/)
+- Stop active animation on pan start
+
 ## 3.1.0
 
 - Lock body scroll while interacting with carousel
