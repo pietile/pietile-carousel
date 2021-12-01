@@ -42,6 +42,9 @@ export function usePan({ count, index, margin, ref }: Config): Result {
   }, []);
 
   const onPanStart = useCallback(() => {
+    // Stop active animation
+    index.stop();
+
     initial.dragging = true;
     initial.index = index.get();
     initial.itemWidth = calcItemWidth(ref, count, margin);
