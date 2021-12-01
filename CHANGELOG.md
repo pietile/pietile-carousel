@@ -4,6 +4,7 @@
 
 - Build with [Vite](https://vitejs.dev/)
 - Stop active animation on pan start
+- Use named export instead of default
 
 ## 3.1.0
 
