@@ -24,7 +24,7 @@ interface Props {
   draggable?: boolean;
   margin?: number;
   style?: React.CSSProperties;
-  onChange?: (index: number) => void;
+  onChange?: (index: number, motionIndex: number) => void;
 }
 
 export const PietileCarousel = React.forwardRef<PietileCarouselHandle, Props>(

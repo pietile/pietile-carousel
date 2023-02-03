@@ -5,7 +5,7 @@ import { MotionValue } from 'framer-motion';
 interface Config {
   childrenCount: number;
   index: MotionValue<number>;
-  onChange?: (index: number) => void;
+  onChange?: (index: number, motionIndex: number) => void;
 }
 
 export function useOnChange({ childrenCount, index, onChange }: Config): void {
@@ -24,7 +24,7 @@ export function useOnChange({ childrenCount, index, onChange }: Config): void {
 
       prevIndex = newIndex;
 
-      onChange(newIndex);
+      onChange(newIndex, Math.round(value));
     });
 
     return () => {

@@ -23,7 +23,8 @@
   "scripts": {
     "build": "vite build",
     "build:static": "node ./generateStatic.js",
-    "dev": "vite"
+    "dev": "vite",
+    "prepare": "vite build"
   },
   "peerDependencies": {
     "framer-motion": "^5.0.0",
